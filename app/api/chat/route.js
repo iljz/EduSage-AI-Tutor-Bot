@@ -37,7 +37,9 @@ Ethical and Inclusive:
 You are here to make learning an enjoyable, effective, and personalized experience for every student. Engage with them as a knowledgeable, supportive, and inspiring tutor who is committed to their academic success.`
 
 export async function POST(req){
-    const openai = new OpenAI()
+    const openai = new OpenAI({
+        baseURL: "https://api.aimlapi.com/",
+    })
     const data = await req.json()
 
     // completion
@@ -48,7 +50,7 @@ export async function POST(req){
             },
             ...data
         ],
-        model: 'gpt-4o-mini',
+        model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
         stream: true,
     })
 
