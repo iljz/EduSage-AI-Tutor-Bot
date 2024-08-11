@@ -1,8 +1,7 @@
 'use client'
 import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import { purple } from '@mui/material/colors'
-import { createTheme } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
 export default function Home() {
@@ -18,12 +17,17 @@ export default function Home() {
 
   const theme = createTheme({
     palette: {
-      primary: purple,
-      secondary: "",
+      primary: {
+        main: '#28511c',  
+      },
+      secondary:{
+        main: '#826e5e'
+      },
     },
   });
- 
+
   const sendMessage = async () => {
+    setLoading(true)
     setMessage('');  // Clear the input field
     setMessages((messages) => [
       ...messages,
@@ -46,6 +50,7 @@ export default function Home() {
       // Function to process the text from the response
       return reader.read().then(function processText({ done, value }) {
         if (done) {
+          setLoading(false)
           return result;
         }
         const text = decoder.decode(value || new Uint8Array(), { stream: true });  // Decode the text
@@ -63,93 +68,95 @@ export default function Home() {
   };
 
   return (
-    <Box 
-      width="100vw" 
-      height="100vh" 
-      display="flex" 
-      flexDirection="column" 
-      justifyContent="center" 
-      alignItems="center"
-      bgcolor="#c8bea0"
-    >
-      {/* Header */}
+    <ThemeProvider theme={theme}>
       <Box 
-        width="50%" 
-        bgcolor="#28511c" 
-        color="white" 
-        p={2}
-        boxShadow={3}
-        display="flex"
-        justifyContent="center"
+        width="100vw" 
+        height="100vh" 
+        display="flex" 
+        flexDirection="column" 
+        justifyContent="center" 
         alignItems="center"
-        borderRadius={4}
+        bgcolor="#c8bea0"
       >
-        <Typography variant="h4">EduSage: The AI Tutor</Typography>
-      </Box>
+        {/* Header */}
+        <Box 
+          width="50%" 
+          bgcolor="#28511c" 
+          color="white" 
+          p={2}
+          boxShadow={3}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          borderRadius={4}
+        >
+          <Typography variant="h4">EduSage: The AI Tutor</Typography>
+        </Box>
 
-      {/* Chat Container */}
-      <Stack 
-        direction="column" 
-        width="100%" 
-        maxWidth="900px" 
-        height="80%" 
-        borderRadius={4} 
-        boxShadow={3} 
-        bgcolor="#f5ece5" 
-        p={3} 
-        spacing={3}
-        mt={2}  // Add margin-top to separate the chat container from the header
-      >
+        {/* Chat Container */}
         <Stack 
           direction="column" 
-          spacing={2} 
-          flexGrow={1} 
-          overflow="auto" 
-          maxHeight="100%"
+          width="100%" 
+          maxWidth="900px" 
+          height="80%" 
+          borderRadius={4} 
+          boxShadow={3} 
+          bgcolor="#f5ece5" 
+          p={3} 
+          spacing={3}
+          mt={2}  // Add margin-top to separate the chat container from the header
         >
-          {messages.map((message, index) => (
-            <Box 
-              key={index} 
-              display="flex" 
-              justifyContent={message.role === 'assistant' ? 'flex-start' : 'flex-end'}
-            >
-              <Box 
-                bgcolor={message.role === 'assistant' ? '#28511c' : '#826e5e'} 
-                color={message.role === 'assistant' ? 'white' : 'white'}    
-                borderRadius={10} 
-                p={2} 
-                boxShadow={1}
-                maxWidth="80%"
-              >
-                <Typography variant="body1">{message.content}</Typography>
-              </Box>
-            </Box>
-          ))}
-          {loading && (
-            <Box display="flex" justifyContent="flex-start">
-              <CircularProgress size={24} />
-            </Box>
-          )}
-        </Stack>
-        <Stack direction={'row'} spacing={2}>
-          <TextField 
-            label="Type a message..." 
-            variant="outlined" 
-            fullWidth 
-            value={message} 
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}  // Send message on Enter key press
-          />
-          <Button 
-            variant="contained" 
-            color="primary"
-            onClick={sendMessage}
-            disabled={loading}  // Disable button while loading
+          <Stack 
+            direction="column" 
+            spacing={2} 
+            flexGrow={1} 
+            overflow="auto" 
+            maxHeight="100%"
           >
-            Send
-          </Button>
+            {messages.map((message, index) => (
+              <Box 
+                key={index} 
+                display="flex" 
+                justifyContent={message.role === 'assistant' ? 'flex-start' : 'flex-end'}
+              >
+                <Box 
+                  bgcolor={message.role === 'assistant' ? '#28511c' : '#826e5e'} 
+                  color={message.role === 'assistant' ? 'white' : 'white'}    
+                  borderRadius={10} 
+                  p={2} 
+                  boxShadow={1}
+                  maxWidth="80%"
+                >
+                  <Typography variant="body1">{message.content}</Typography>
+                </Box>
+              </Box>
+            ))}
+            {loading && (
+              <Box display="flex" justifyContent="flex-start">
+                <CircularProgress size={24} />
+              </Box>
+            )}
+          </Stack>
+          <Stack direction={'row'} spacing={2}>
+            <TextField 
+              label="Type a message..." 
+              variant="outlined" 
+              fullWidth 
+              value={message} 
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}  // Send message on Enter key press
+            />
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={sendMessage}
+              disabled={loading}  // Disable button while loading
+            >
+              Send
+            </Button>
+          </Stack>
         </Stack>
-      </Stack>
-    </Box>
+      </Box>
+    </ThemeProvider>
   );
 }
