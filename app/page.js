@@ -80,7 +80,7 @@ export default function Home() {
       >
         {/* Header */}
         <Box 
-          width="50%" 
+          width="20%" 
           bgcolor="#28511c" 
           color="white" 
           p={2}
